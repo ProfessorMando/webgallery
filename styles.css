@@ -143,21 +143,37 @@ button {
   opacity: 1;
 }
 
-#theme-wave::before {
+#theme-wave::before,
+#theme-wave::after {
   content: "";
   position: absolute;
-  width: calc(var(--wave-radius, 0px) * 2);
-  height: calc(var(--wave-radius, 0px) * 2);
   top: var(--wave-origin-top, 0px);
   left: var(--wave-origin-left, 0px);
   border-radius: 50%;
   transform: translate(-50%, -50%);
+}
+
+#theme-wave::before {
+  width: calc(var(--wave-radius, 0px) * 2);
+  height: calc(var(--wave-radius, 0px) * 2);
   background:
     radial-gradient(circle,
-      rgba(var(--wave-tone, 255,255,255), 0.00) calc(100% - 130px),
-      rgba(var(--wave-tone, 255,255,255), 0.14) calc(100% - 90px),
-      rgba(var(--wave-tone, 255,255,255), 0.30) calc(100% - 55px),
-      rgba(var(--wave-tone, 255,255,255), 0.72) calc(100% - 24px),
+      rgba(var(--wave-tone, 255,255,255), 0.00) calc(100% - 170px),
+      rgba(var(--wave-tone, 255,255,255), 0.10) calc(100% - 130px),
+      rgba(var(--wave-tone, 255,255,255), 0.42) calc(100% - 88px),
+      rgba(var(--wave-tone, 255,255,255), 0.95) calc(100% - 44px),
+      rgba(var(--wave-tone, 255,255,255), 0.00) 100%);
+}
+
+#theme-wave::after {
+  width: calc(var(--wave-radius, 0px) * 2);
+  height: calc(var(--wave-radius, 0px) * 2);
+  filter: blur(12px);
+  background:
+    radial-gradient(circle,
+      rgba(var(--wave-tone, 255,255,255), 0.00) calc(100% - 210px),
+      rgba(var(--wave-tone, 255,255,255), 0.08) calc(100% - 155px),
+      rgba(var(--wave-tone, 255,255,255), 0.30) calc(100% - 105px),
       rgba(var(--wave-tone, 255,255,255), 0.00) 100%);
 }
 
