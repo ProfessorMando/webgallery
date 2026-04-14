@@ -1,27 +1,27 @@
 :root {
-  --font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-family: "Clarendon Condensed", "Clarendon", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
 
-  /* Redwood / bamboo-inspired color tokens (light mode) */
-  --bg: #f5f1e8;
-  --surface: #e9e1d2;
-  --text: #2f241c;
-  --accent: #8c4f39;
-  --accent-contrast: #fff8f0;
-  --outline: #bfa98f;
+  /* Front-page monochrome tokens (light mode) */
+  --bg: #ffffff;
+  --surface: #b3b3b3;
+  --text: #000000;
+  --accent: #000000;
+  --accent-contrast: #ffffff;
+  --outline: #7a7a7a;
 
-  --shadow: 0 8px 24px rgba(47, 36, 28, 0.18);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 html[data-theme="dark"] {
-  /* Redwood / bamboo-inspired color tokens (dark mode) */
-  --bg: #191511;
-  --surface: #2a221a;
-  --text: #f0e6d9;
-  --accent: #b86c51;
-  --accent-contrast: #1b110d;
-  --outline: #705947;
+  /* Front-page monochrome tokens (dark mode) */
+  --bg: #000000;
+  --surface: #666666;
+  --text: #ffffff;
+  --accent: #ffffff;
+  --accent-contrast: #000000;
+  --outline: #9a9a9a;
 
-  --shadow: 0 10px 24px rgba(0, 0, 0, 0.42);
+  --shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -34,7 +34,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-family);
-  transition: background 220ms ease, color 220ms ease;
+  transition: background 1000ms linear, color 1000ms linear;
   overflow: hidden;
 }
 
@@ -73,7 +73,7 @@ body {
   background: var(--surface);
   border: 1px solid var(--outline);
   border-radius: 999px;
-  transition: background 220ms ease;
+  transition: background 1000ms linear, border-color 1000ms linear;
 }
 
 .slider::before {
@@ -85,7 +85,7 @@ body {
   top: 3px;
   border-radius: 50%;
   background: var(--accent);
-  transition: transform 220ms ease, background 220ms ease;
+  transition: transform 1000ms linear, background 1000ms linear;
 }
 
 .theme-switch input:checked + .slider::before {
@@ -108,6 +108,11 @@ body {
   box-shadow: var(--shadow);
   display: grid;
   gap: 1rem;
+  transition:
+    background 1000ms linear,
+    border-color 1000ms linear,
+    box-shadow 1000ms linear,
+    color 1000ms linear;
 }
 
 select,
@@ -117,6 +122,10 @@ button {
   border-radius: 10px;
   border: 1px solid var(--outline);
   padding: 0.8rem 0.95rem;
+  transition:
+    background 1000ms linear,
+    color 1000ms linear,
+    border-color 1000ms linear;
 }
 
 select {
@@ -154,7 +163,7 @@ button {
   background: var(--wave-color, #000);
   transform: translate(-50%, -50%) scale(0);
   transform-origin: center;
-  animation: wave-expand 500ms ease-in forwards;
+  animation: wave-expand 1000ms ease-out forwards;
 }
 
 @keyframes wave-expand {

@@ -5,9 +5,10 @@ const form = document.getElementById("element-form");
 const select = document.getElementById("element-select");
 
 const THEME_KEY = "ui-gallery-theme";
+const WAVE_DURATION_MS = 1000;
 const THEME_BG = {
-  light: "#f5f1e8",
-  dark: "#191511",
+  light: "#ffffff",
+  dark: "#000000",
 };
 
 const savedTheme = localStorage.getItem(THEME_KEY) === "dark" ? "dark" : "light";
@@ -21,7 +22,17 @@ function launchThemeWave(nextTheme) {
   const originX = rect.left + rect.width / 2;
   const originY = rect.top + rect.height / 2;
 
-  const farthestDistance = Math.hypot(originX, window.innerHeight - originY);
+  const corners = [
+    [0, 0],
+    [window.innerWidth, 0],
+    [0, window.innerHeight],
+    [window.innerWidth, window.innerHeight],
+  ];
+
+  const farthestDistance = Math.max(
+    ...corners.map(([x, y]) => Math.hypot(x - originX, y - originY)),
+  );
+
   const scale = (farthestDistance * 2) / 10;
 
   wave.style.setProperty("--wave-origin-left", `${originX}px`);
@@ -29,18 +40,16 @@ function launchThemeWave(nextTheme) {
   wave.style.setProperty("--wave-scale", scale.toString());
   wave.style.setProperty("--wave-color", THEME_BG[nextTheme]);
 
+  root.setAttribute("data-theme", nextTheme);
+  localStorage.setItem(THEME_KEY, nextTheme);
+
   wave.classList.remove("is-active");
   void wave.offsetWidth;
   wave.classList.add("is-active");
 
   window.setTimeout(() => {
-    root.setAttribute("data-theme", nextTheme);
-    localStorage.setItem(THEME_KEY, nextTheme);
-  }, 250);
-
-  window.setTimeout(() => {
     wave.classList.remove("is-active");
-  }, 500);
+  }, WAVE_DURATION_MS);
 }
 
 if (toggle) {
