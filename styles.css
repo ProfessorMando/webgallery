@@ -34,8 +34,9 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-family);
-  transition: background 1000ms linear, color 1000ms linear;
   overflow: hidden;
+  position: relative;
+  isolation: isolate;
 }
 
 .page-header {
@@ -73,7 +74,6 @@ body {
   background: var(--surface);
   border: 1px solid var(--outline);
   border-radius: 999px;
-  transition: background 1000ms linear, border-color 1000ms linear;
 }
 
 .slider::before {
@@ -84,8 +84,8 @@ body {
   left: 4px;
   top: 3px;
   border-radius: 50%;
-  background: var(--accent);
-  transition: transform 1000ms linear, background 1000ms linear;
+  background: var(--knob-color, var(--accent));
+  transition: transform 250ms ease;
 }
 
 .theme-switch input:checked + .slider::before {
@@ -108,11 +108,6 @@ body {
   box-shadow: var(--shadow);
   display: grid;
   gap: 1rem;
-  transition:
-    background 1000ms linear,
-    border-color 1000ms linear,
-    box-shadow 1000ms linear,
-    color 1000ms linear;
 }
 
 select,
@@ -122,10 +117,6 @@ button {
   border-radius: 10px;
   border: 1px solid var(--outline);
   padding: 0.8rem 0.95rem;
-  transition:
-    background 1000ms linear,
-    color 1000ms linear,
-    border-color 1000ms linear;
 }
 
 select {
@@ -144,32 +135,46 @@ button {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 20;
-  display: none;
+  z-index: -1;
+  opacity: 0;
 }
 
 #theme-wave.is-active {
-  display: block;
+  opacity: 1;
 }
 
-#theme-wave::before {
+#theme-wave::before,
+#theme-wave::after {
   content: "";
   position: absolute;
-  width: 10px;
-  height: 10px;
   top: var(--wave-origin-top, 0px);
   left: var(--wave-origin-left, 0px);
   border-radius: 50%;
-  background: var(--wave-color, #000);
-  transform: translate(-50%, -50%) scale(0);
-  transform-origin: center;
-  animation: wave-expand 1000ms ease-out forwards;
+  transform: translate(-50%, -50%);
 }
 
-@keyframes wave-expand {
-  to {
-    transform: translate(-50%, -50%) scale(var(--wave-scale, 1));
-  }
+#theme-wave::before {
+  width: calc(var(--wave-radius, 0px) * 2);
+  height: calc(var(--wave-radius, 0px) * 2);
+  background:
+    radial-gradient(circle,
+      rgba(var(--wave-tone, 255,255,255), 0.00) calc(100% - 170px),
+      rgba(var(--wave-tone, 255,255,255), 0.10) calc(100% - 130px),
+      rgba(var(--wave-tone, 255,255,255), 0.42) calc(100% - 88px),
+      rgba(var(--wave-tone, 255,255,255), 0.95) calc(100% - 44px),
+      rgba(var(--wave-tone, 255,255,255), 0.00) 100%);
+}
+
+#theme-wave::after {
+  width: calc(var(--wave-radius, 0px) * 2);
+  height: calc(var(--wave-radius, 0px) * 2);
+  filter: blur(12px);
+  background:
+    radial-gradient(circle,
+      rgba(var(--wave-tone, 255,255,255), 0.00) calc(100% - 210px),
+      rgba(var(--wave-tone, 255,255,255), 0.08) calc(100% - 155px),
+      rgba(var(--wave-tone, 255,255,255), 0.30) calc(100% - 105px),
+      rgba(var(--wave-tone, 255,255,255), 0.00) 100%);
 }
 
 .visually-hidden {
@@ -180,4 +185,27 @@ button {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   clip-path: inset(50%);
+}
+
+.page-header,
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+.wave-letter {
+  display: inline-grid;
+}
+
+.wave-letter-half {
+  grid-area: 1 / 1;
+  display: inline-block;
+}
+
+.wave-letter-top {
+  clip-path: inset(0 0 50% 0);
+}
+
+.wave-letter-bottom {
+  clip-path: inset(50% 0 0 0);
 }
