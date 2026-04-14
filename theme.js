@@ -8,7 +8,7 @@ const slider = document.querySelector(".slider");
 
 const THEME_KEY = "ui-gallery-theme";
 const WAVE_DURATION_MS = 1250;
-const WAVE_BAND = 220;
+const WAVE_BAND = 170;
 
 const THEMES = {
   light: {
@@ -67,15 +67,11 @@ function clamp01(value) {
 }
 
 function easeInCloth(t) {
-  return t ** 2.35;
+  return t ** 2.2;
 }
 
 function pointDistance(point, origin) {
   return Math.hypot(point.x - origin.x, point.y - origin.y);
-}
-
-function localProgress(radius, distance, band = WAVE_BAND) {
-  return clamp01((radius - distance + band / 2) / band);
 }
 
 function splitHeadingToLetters() {
@@ -117,6 +113,28 @@ function getCenterFromRect(rect) {
     x: rect.left + rect.width / 2,
     y: rect.top + rect.height / 2,
   };
+}
+
+function getRectDistanceRange(rect, origin) {
+  const corners = [
+    { x: rect.left, y: rect.top },
+    { x: rect.right, y: rect.top },
+    { x: rect.left, y: rect.bottom },
+    { x: rect.right, y: rect.bottom },
+  ];
+
+  const distances = corners.map((corner) => pointDistance(corner, origin));
+  return {
+    min: Math.min(...distances),
+    max: Math.max(...distances),
+  };
+}
+
+function rangeProgress(radius, minDistance, maxDistance, band = WAVE_BAND) {
+  const start = minDistance - band / 2;
+  const end = maxDistance + band / 2;
+  if (end <= start) return radius >= end ? 1 : 0;
+  return clamp01((radius - start) / (end - start));
 }
 
 function setThemeStatic(themeName) {
@@ -191,14 +209,15 @@ function launchThemeWave(nextTheme) {
 
   const elements = [
     {
-      distance: pointDistance({ x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 }, origin),
+      minDistance: 0,
+      maxDistance: maxRadius,
       paint: (p) => {
         document.body.style.backgroundColor = mixColor(from.bg, to.bg, p);
         document.body.style.color = mixColor(from.text, to.text, p);
       },
     },
     card && {
-      distance: pointDistance(getCenterFromRect(card.getBoundingClientRect()), origin),
+      ...getRectDistanceRange(card.getBoundingClientRect(), origin),
       paint: (p) => {
         card.style.backgroundColor = mixColor(from.surface, to.surface, p);
         card.style.borderColor = mixColor(from.outline, to.outline, p);
@@ -206,7 +225,7 @@ function launchThemeWave(nextTheme) {
       },
     },
     slider && {
-      distance: pointDistance(getCenterFromRect(slider.getBoundingClientRect()), origin),
+      ...getRectDistanceRange(slider.getBoundingClientRect(), origin),
       paint: (p) => {
         slider.style.backgroundColor = mixColor(from.surface, to.surface, p);
         slider.style.borderColor = mixColor(from.outline, to.outline, p);
@@ -214,7 +233,7 @@ function launchThemeWave(nextTheme) {
       },
     },
     select && {
-      distance: pointDistance(getCenterFromRect(select.getBoundingClientRect()), origin),
+      ...getRectDistanceRange(select.getBoundingClientRect(), origin),
       paint: (p) => {
         select.style.backgroundColor = mixColor(from.bg, to.bg, p);
         select.style.color = mixColor(from.text, to.text, p);
@@ -222,7 +241,7 @@ function launchThemeWave(nextTheme) {
       },
     },
     button && {
-      distance: pointDistance(getCenterFromRect(button.getBoundingClientRect()), origin),
+      ...getRectDistanceRange(button.getBoundingClientRect(), origin),
       paint: (p) => {
         button.style.backgroundColor = mixColor(from.accent, to.accent, p);
         button.style.color = mixColor(from.accentContrast, to.accentContrast, p);
@@ -235,26 +254,22 @@ function launchThemeWave(nextTheme) {
 
       if (!topHalf || !bottomHalf) {
         return [{
-          distance: pointDistance(getCenterFromRect(letter.getBoundingClientRect()), origin),
+          ...getRectDistanceRange(letter.getBoundingClientRect(), origin),
           paint: (p) => {
             letter.style.color = mixColor(from.text, to.text, p);
           },
         }];
       }
 
-      const rect = letter.getBoundingClientRect();
-      const topPoint = { x: rect.left + rect.width / 2, y: rect.top + rect.height * 0.3 };
-      const bottomPoint = { x: rect.left + rect.width / 2, y: rect.top + rect.height * 0.7 };
-
       return [
         {
-          distance: pointDistance(topPoint, origin),
+          ...getRectDistanceRange(topHalf.getBoundingClientRect(), origin),
           paint: (p) => {
             topHalf.style.color = mixColor(from.text, to.text, p);
           },
         },
         {
-          distance: pointDistance(bottomPoint, origin),
+          ...getRectDistanceRange(bottomHalf.getBoundingClientRect(), origin),
           paint: (p) => {
             bottomHalf.style.color = mixColor(from.text, to.text, p);
           },
@@ -287,7 +302,7 @@ function launchThemeWave(nextTheme) {
     wave.style.setProperty("--wave-radius", `${radius}px`);
 
     for (const entry of elements) {
-      const p = localProgress(radius, entry.distance);
+      const p = rangeProgress(radius, entry.minDistance, entry.maxDistance);
       entry.paint(p);
     }
 
