@@ -1,29 +1,40 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Test UI Element</title>
-    <link rel="stylesheet" href="styles.css" />
     <style>
-      body {
+      :root {
+        font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #1f1f1f;
         background: #d3d3d3;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
         display: grid;
         place-items: center;
       }
 
-      .back-link {
-        font: 600 1rem/1 var(--font-family);
-        color: #2f241c;
-        text-decoration: none;
-        border: 1px solid #2f241c;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
+      .card {
         background: #efefef;
+        border: 1px solid #9d9d9d;
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+      }
+
+      .card h1 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
       }
     </style>
   </head>
   <body>
-    <a class="back-link" href="index.html">Back to gallery</a>
+    <section class="card" aria-label="Test UI element">
+      <h1>Test page</h1>
+    </section>
   </body>
 </html>
