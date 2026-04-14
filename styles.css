@@ -135,6 +135,7 @@ button {
   pointer-events: none;
   z-index: 0;
   opacity: 0;
+  mix-blend-mode: difference;
 }
 
 #theme-wave.is-active {
@@ -152,10 +153,11 @@ button {
   transform: translate(-50%, -50%);
   background:
     radial-gradient(circle,
-      rgba(255, 255, 255, 0) calc(100% - 72px),
-      rgba(255, 255, 255, 0.12) calc(100% - 52px),
-      rgba(255, 255, 255, 0.20) calc(100% - 30px),
-      rgba(255, 255, 255, 0) 100%);
+      rgba(var(--wave-tone, 255,255,255), 0.00) calc(100% - 130px),
+      rgba(var(--wave-tone, 255,255,255), 0.14) calc(100% - 90px),
+      rgba(var(--wave-tone, 255,255,255), 0.30) calc(100% - 55px),
+      rgba(var(--wave-tone, 255,255,255), 0.72) calc(100% - 24px),
+      rgba(var(--wave-tone, 255,255,255), 0.00) 100%);
 }
 
 .visually-hidden {
@@ -175,5 +177,18 @@ button {
 }
 
 .wave-letter {
+  display: inline-grid;
+}
+
+.wave-letter-half {
+  grid-area: 1 / 1;
   display: inline-block;
+}
+
+.wave-letter-top {
+  clip-path: inset(0 0 50% 0);
+}
+
+.wave-letter-bottom {
+  clip-path: inset(50% 0 0 0);
 }

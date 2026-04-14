@@ -8,7 +8,7 @@ const slider = document.querySelector(".slider");
 
 const THEME_KEY = "ui-gallery-theme";
 const WAVE_DURATION_MS = 1250;
-const WAVE_BAND = 150;
+const WAVE_BAND = 220;
 
 const THEMES = {
   light: {
@@ -67,7 +67,7 @@ function clamp01(value) {
 }
 
 function easeInCloth(t) {
-  return t ** 1.9;
+  return t ** 2.35;
 }
 
 function pointDistance(point, origin) {
@@ -85,10 +85,26 @@ function splitHeadingToLetters() {
   const fragment = document.createDocumentFragment();
 
   for (const char of text) {
-    const span = document.createElement("span");
-    span.className = "wave-letter";
-    span.textContent = char === " " ? "\u00A0" : char;
-    fragment.appendChild(span);
+    const letter = document.createElement("span");
+    letter.className = "wave-letter";
+
+    if (char === " ") {
+      letter.textContent = " ";
+      fragment.appendChild(letter);
+      continue;
+    }
+
+    const top = document.createElement("span");
+    top.className = "wave-letter-half wave-letter-top";
+    top.textContent = char;
+
+    const bottom = document.createElement("span");
+    bottom.className = "wave-letter-half wave-letter-bottom";
+    bottom.textContent = char;
+
+    letter.appendChild(top);
+    letter.appendChild(bottom);
+    fragment.appendChild(letter);
   }
 
   headerTitle.textContent = "";
@@ -111,8 +127,8 @@ function setThemeStatic(themeName) {
   document.body.style.color = theme.text;
 
   if (headerTitle) {
-    headerTitle.querySelectorAll(".wave-letter").forEach((letter) => {
-      letter.style.color = theme.text;
+    headerTitle.querySelectorAll(".wave-letter-half").forEach((letterHalf) => {
+      letterHalf.style.color = theme.text;
     });
   }
 
@@ -213,12 +229,38 @@ function launchThemeWave(nextTheme) {
         button.style.borderColor = mixColor(from.outline, to.outline, p);
       },
     },
-    ...letters.map((letter) => ({
-      distance: pointDistance(getCenterFromRect(letter.getBoundingClientRect()), origin),
-      paint: (p) => {
-        letter.style.color = mixColor(from.text, to.text, p);
-      },
-    })),
+    ...letters.flatMap((letter) => {
+      const topHalf = letter.querySelector(".wave-letter-top");
+      const bottomHalf = letter.querySelector(".wave-letter-bottom");
+
+      if (!topHalf || !bottomHalf) {
+        return [{
+          distance: pointDistance(getCenterFromRect(letter.getBoundingClientRect()), origin),
+          paint: (p) => {
+            letter.style.color = mixColor(from.text, to.text, p);
+          },
+        }];
+      }
+
+      const rect = letter.getBoundingClientRect();
+      const topPoint = { x: rect.left + rect.width / 2, y: rect.top + rect.height * 0.3 };
+      const bottomPoint = { x: rect.left + rect.width / 2, y: rect.top + rect.height * 0.7 };
+
+      return [
+        {
+          distance: pointDistance(topPoint, origin),
+          paint: (p) => {
+            topHalf.style.color = mixColor(from.text, to.text, p);
+          },
+        },
+        {
+          distance: pointDistance(bottomPoint, origin),
+          paint: (p) => {
+            bottomHalf.style.color = mixColor(from.text, to.text, p);
+          },
+        },
+      ];
+    }),
   ].filter(Boolean);
 
   const thisAnimation = ++activeAnimationId;
@@ -228,6 +270,7 @@ function launchThemeWave(nextTheme) {
   }
 
   wave.classList.add("is-active");
+  wave.style.setProperty("--wave-tone", nextTheme === "dark" ? "255,255,255" : "0,0,0");
   wave.style.setProperty("--wave-origin-left", `${origin.x}px`);
   wave.style.setProperty("--wave-origin-top", `${origin.y}px`);
   wave.style.setProperty("--wave-radius", "0px");
