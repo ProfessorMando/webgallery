@@ -35,6 +35,8 @@ body {
   color: var(--text);
   font-family: var(--font-family);
   overflow: hidden;
+  position: relative;
+  isolation: isolate;
 }
 
 .page-header {
@@ -133,9 +135,8 @@ button {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1;
   opacity: 0;
-  mix-blend-mode: difference;
 }
 
 #theme-wave.is-active {
